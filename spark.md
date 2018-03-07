@@ -2,7 +2,7 @@
 
 ## 1. Chargement Spark dans Ambari
 
-```javascript
+```scala
 sudo su spark
 export SPARK_MAJOR_VERSION=2   #préciser version 2
 cd /usr/hdp/current/spark2-client/
@@ -12,7 +12,7 @@ hdfs dfs -copyFromLocal /etc/hadoop/conf/log4j.properties /tmp/data.txt
 
 ###      CountWords
 
-```javascript
+```scala
 val data = spark.read.textFile("/tmp/data.txt").as[String]
 val words = data.flatMap(value => value.split("\\s+"))
 val groupedWords = words.groupByKey(_.toLowerCase)
@@ -23,7 +23,7 @@ counts.show()
 ## 2. Dataset Wildlife
 
 Chargement du dataset depuis le serveur:
-```javascript
+```scala
 sudo su spark
 export SPARK_MAJOR_VERSION=2
 cd /usr/hdp/current/spark2-client/
@@ -33,19 +33,19 @@ hdfs dfs -copyFromLocal /etc/hadoop/conf/log4j.properties /user/hdfs/wildlife.cs
 
 Mettre correctement le header et le bon type de format de données par colonne lors du chargement du fichier:
 
-```javascript
+```scala
 val data = spark.read.option("header", "true").option("inferSchema", "true").csv("/user/hdfs/wildlife.csv")
 ```
 Pour les noms de colonnes contenant des . ou des chiffres, mettre des backticks (accent grave) ou changer le nom de la colonne:
 
-```javascript
+```scala
 var df = data.withColumnRenamed("App.","App")
 ```
 Fonction Filter: On ne garde que les données datant d'après 2016.
 
 On réapplique un filtre, pour ne garder que les mammifères.
 
-```javascript
+```scala
 val year = data.filter(data("Year") > 2016)
 year.show(5)
 
@@ -73,18 +73,18 @@ mamm2017.show(5)
 ``` 
 Fonction: Count. 56 mammifères ont été échangés après les années 2016.
 
-```javascript
+```scala
 mamm2017.count()
 res10: Long = 56
 ```
 Sauvegarde
 
-```javascript
+```scala
 mamm2017.rdd.repartition(1).saveAsTextFile("/tmp/wildlife")
 ```
 Fonction: printSchema
 
-```javascript
+```scala
 data.printSchema()
 root
  |-- Year: integer (nullable = true)
@@ -109,7 +109,7 @@ Clause: groupBy à coupler avec une fonction d'aggrégation (min, max, avg, etc.
 
 On somme pour chaque classe le nombre d'individus comptabilisés dans le dataset.
 
-```javascript
+```scala
 data.groupBy("Class").count().show()
 +--------------+-----+
 |         Class|count|
@@ -138,7 +138,7 @@ Fonction select.
 
 On choisit 2 colonnes du dataset d'origine, class et taxon.
 
-```javascript
+```scala
 scala> data.select("Class", "Taxon").show(5)
 +-----+--------------------+
 |Class|               Taxon|
@@ -155,7 +155,7 @@ Fonction: sort.
 
 On range par ordre alphabétique les sources de prélèvements.
 
-```javascript
+```scala
 data.select("Order", "Taxon", "Source").sort("Taxon").show(5)
 +--------+--------------------+------+
 |   Order|               Taxon|Source|
@@ -171,7 +171,7 @@ Fonction agg: aggregate à coupler avec une méthode d'aggrégation.
 
 Calcule la somme, le minimum, le maximum et la moyenne des quantités importés.
 
-```javascript
+```scala
 data.agg(sum("Importer reported quantity"),min("Importer reported quantity"),max("Importer reported quantity"), avg("Importer reported quantity")).show()
 +-------------------------------+-------------------------------+-------------------------------+-------------------------------+
 |sum(Importer reported quantity)|min(Importer reported quantity)|max(Importer reported quantity)|avg(Importer reported quantity)|
@@ -184,7 +184,7 @@ Fonction join: pour joindre 2 dataframes ("data" et "db2").
 
 Option Seq: précise les colonnes identiques, pour éviter les duplicats (colonnes Year et Source):
 
-```javascript
+```scala
 db2.show(5)
 +----+-----+----+------+
 |Year|  irq| erq|Source|
@@ -224,7 +224,7 @@ root
 ### Requêtes SQL:
 
 Besoin de créer un dataset "lisible" en SQL (TempView)
-```javascript
+```scala
 newdb.createOrReplaceTempView("wildlife")
 
 spark.sql("SELECT Taxon, irq FROM wildlife WHERE irq = (SELECT max(irq) FROM wildlife)").show()
