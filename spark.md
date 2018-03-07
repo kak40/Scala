@@ -211,7 +211,7 @@ root
  |-- erq: double (nullable = true)
 ```
 
-###Requêtes SQL:
+### Requêtes SQL:
 
 Besoin de créer un dataset "lisible" en SQL (TempView)
 ```javascript
