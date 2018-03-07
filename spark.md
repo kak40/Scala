@@ -41,7 +41,9 @@ Pour les noms de colonnes contenant des . ou des chiffres, mettre des backticks 
 ```javascript
 var df = data.withColumnRenamed("App.","App")
 ```
-Fonction Filter:
+Fonction Filter: On ne garde que les données datant d'après 2016.
+
+On réapplique un filtre, pour ne garder que les mammifères.
 
 ```javascript
 val year = data.filter(data("Year") > 2016)
@@ -69,7 +71,7 @@ mamm2017.show(5)
 |2017|   I|  Acinonyx jubatus|Mammalia|  Carnivora|     Felidae| Acinonyx|      MW|      ZA|  null|                      14.0|                      null|     live|null|      N|     W|
 +----+----+------------------+--------+-----------+------------+---------+--------+--------+------+--------------------------+--------------------------+---------+----+-------+------+
 ``` 
-Fonction: Count
+Fonction: Count. 56 mammifères ont été échangés après les années 2016.
 
 ```javascript
 mamm2017.count()
@@ -103,7 +105,9 @@ root
  |-- Source: string (nullable = true)
 ```
 
-Clause: groupBy à coupler avec une fonction d'aggrégation (min, max, avg, etc.)
+Clause: groupBy à coupler avec une fonction d'aggrégation (min, max, avg, etc.).
+
+On somme pour chaque classe le nombre d'individus comptabilisés dans le dataset.
 
 ```javascript
 data.groupBy("Class").count().show()
@@ -130,7 +134,9 @@ data.groupBy("Class").count().show()
 +-----
 ```
 
-Fonction select
+Fonction select.
+
+On choisit 2 colonnes du dataset d'origine, class et taxon.
 
 ```javascript
 scala> data.select("Class", "Taxon").show(5)
@@ -145,7 +151,9 @@ scala> data.select("Class", "Taxon").show(5)
 +-----+--------------------+
 ```
 
-Fonction: sort
+Fonction: sort.
+
+On range par ordre alphabétique les sources de prélèvements.
 
 ```javascript
 data.select("Order", "Taxon", "Source").sort("Taxon").show(5)
@@ -159,7 +167,9 @@ data.select("Order", "Taxon", "Source").sort("Taxon").show(5)
 |Liliales|"Galanthus nivali.."|     A|
 +--------+--------------------+------+
 ```
-Fonction agg: aggregate à coupler avec une méthode d'aggrégation
+Fonction agg: aggregate à coupler avec une méthode d'aggrégation.
+
+Calcule la somme, le minimum, le maximum et la moyenne des quantités importés.
 
 ```javascript
 data.agg(sum("Importer reported quantity"),min("Importer reported quantity"),max("Importer reported quantity"), avg("Importer reported quantity")).show()
